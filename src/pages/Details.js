@@ -1,4 +1,4 @@
-import { View, Text, Box, Button, ScrollView } from "native-base";
+import { View, Text, Box, Button, ScrollView, Flex } from "native-base";
 import React from "react";
 import {
   widthPercentageToDP as wp,
@@ -8,27 +8,18 @@ import { Ionicons } from "@expo/vector-icons";
 
 function Details({ navigation }) {
   return (
-    <View
-      display="flex"
+    <Flex
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
-      height={hp("90%")}
-      mt={30}
+      height={hp("84%")}
+      mt={8}
     >
-      <View flex="90%" justifyContent="center" width={wp("85%")}>
-        <Button
-          alignSelf="start"
-          backgroundColor="none"
-          onPress={() => navigation.navigate("MyTab")}
-        >
-          <Ionicons name="arrow-undo-outline" size={25} color="black" />
-        </Button>
+      <View justifyContent="center" width={wp("85%")}>
         <ScrollView
           width={wp("85%")}
-          h="80"
+          h="100%"
           showsHorizontalScrollIndicator={false}
-          mt={3}
         >
           <View
             backgroundColor="#DAEFFF"
@@ -37,9 +28,8 @@ function Details({ navigation }) {
             borderRadius={10}
             my={2}
           >
-            <View
+            <Flex
               backgroundColor="#DAEFFF"
-              display="flex"
               flexDirection="row"
               borderRadius={10}
               my="auto"
@@ -55,7 +45,6 @@ function Details({ navigation }) {
                     fontSize={10}
                     fontWeight="bold"
                     color="white"
-                    style={{}}
                   >
                     Study
                   </Text>
@@ -69,10 +58,21 @@ function Details({ navigation }) {
                   ml={1}
                 ></Box>
               </View>
-            </View>
+            </Flex>
             <View mt={3} width={wp("75%")}>
-              <Text fontSize={11} style={{ color: "#9B9B9B" }}>
+              <Text fontSize={15} style={{ color: "#9B9B9B" }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                Pellentesque imperdiet massa ac tincidunt scelerisque. Morbi vel
+                turpis maximus, pulvinar metus quis, mattis neque. Pellentesque
+                ut nulla lectus. Nulla ut vulputate risus, non ultricies mauris.
+                Suspendisse posuere velit pellentesque felis posuere, a volutpat
+                diam cursus. In iaculis risus nunc, sollicitudin varius ante
+                blandit vel. Sed nec nisi hendrerit, vulputate est eget, luctus
+                nisi. Donec quis lobortis nulla. Fusce rutrum lobortis ex id
+                vestibulum. Sed elementum sagittis nibh, sed venenatis lectus
+                efficitur non. Mauris metus magna, luctus vitae nunc non,
+                blandit blandit velit. Nunc bibendum neque a dolor rhoncus
+                semper at eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                 Pellentesque imperdiet massa ac tincidunt scelerisque. Morbi vel
                 turpis maximus, pulvinar metus quis, mattis neque. Pellentesque
                 ut nulla lectus. Nulla ut vulputate risus, non ultricies mauris.
@@ -85,14 +85,14 @@ function Details({ navigation }) {
                 blandit blandit velit. Nunc bibendum neque a dolor rhoncus
                 semper at eget.
               </Text>
-              <Text fontSize={8} mt={5} style={{ color: "#9B9B9B" }}>
+              <Text fontSize={15} mt={5} style={{ color: "#9B9B9B" }}>
                 19 July 2022
               </Text>
             </View>
           </View>
         </ScrollView>
       </View>
-    </View>
+    </Flex>
   );
 }
 

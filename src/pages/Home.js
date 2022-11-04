@@ -1,134 +1,204 @@
 import Photo from "../assets/1.jpg";
-import Details from "./Details";
 import {
   Image,
   View,
   Text,
   Button,
   VStack,
-  FormControl,
   Input,
-  Link,
-  HStack,
   Box,
-  Heading,
   Select,
-  Divider,
-  CheckIcon,
   ScrollView,
+  Flex,
+  Modal,
 } from "native-base";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import DatePicker from "@dietime/react-native-date-picker";
+import { API } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AntDesign } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
+import Moment from "moment";
 
 function Home({ navigation }) {
   const [cat, setCat] = useState("");
   const [service, setService] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [showModal, setShowModal] = useState(false);
+  const [user, setUser] = useState();
+  const [list, setList] = useState();
+  const [status, setNama] = useState();
+  const [listCount, setListCount] = useState();
+  const isFocused = useIsFocused();
 
-  const Profile = [
-    {
-      id: 1,
-      title: "jedeye__",
-      status: "Complete",
-      description:
-        "Learn Golang to improve fundamentals and familiarize with coding.",
-      date: "12 June 2022",
-    },
-    {
-      id: 2,
-      title: "jedeye__",
-      status: "Complete",
-      description:
-        "Learn Golang to improve fundamentals and familiarize with coding.",
-      date: "12 June 2022",
-    },
-    {
-      id: 3,
-      title: "jedeye__",
-      status: "Complete",
-      description:
-        "Learn Golang to improve fundamentals and familiarize with coding.",
-      date: "12 June 2022",
-    },
-    {
-      id: 4,
-      title: "jedeye__",
-      status: "Complete",
-      description:
-        "Learn Golang to improve fundamentals and familiarize with coding.",
-      date: "12 June 2022",
-    },
-  ];
+  const getUsers = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const id = await AsyncStorage.getItem("id");
+
+      if (token === null) {
+        navigation.navigate("Login");
+      }
+
+      const userResponse = await API.get(`/Users/${id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const listCountResponse = await API.get(`/list?id=${id}`, {});
+      const listResponse = await API.get(`/lists?id=${id}`, {});
+
+      setUser(userResponse.data.firstName);
+      setListCount(listCountResponse.data.count);
+      setList(listResponse.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const handleSubmit = async (e) => {
+  //   try {
+  //     const token = await AsyncStorage.getItem("token");
+
+  //     if (token === null) {
+  //       navigation.navigate("Login");
+  //     }
+
+  //     const response = await API.post("/add-list", list, {
+  //       headers: {
+  //         Authorization: "Bearer " + token,
+  //       },
+  //     });
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
+  useEffect(() => {
+    if (isFocused) {
+      getUsers();
+    }
+  }, [isFocused]);
 
   return (
-    <View
-      display="flex"
+    <Flex
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
       height={hp("85%")}
-      mt={50}
+      mt={75}
     >
-      <View flex="90%" justifyContent="center" width={wp("85%")}>
-        <View display="flex" width={wp("85%")} flexDirection="row">
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)}>
+        <Modal.Content>
+          <Modal.CloseButton />
+          <Modal.Header>Select Date</Modal.Header>
+          <Modal.Body>
+            <View>
+              <Text fontSize={15}>
+                {date ? date.toDateString() : "Select date..."}
+              </Text>
+              <DatePicker
+                value={date}
+                onChange={(value) => setDate(value)}
+                format="yyyy-mm-dd"
+              />
+            </View>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button.Group space={2}>
+              <Button
+                variant="ghost"
+                colorScheme="blueGray"
+                onPress={() => {
+                  setShowModal(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onPress={() => {
+                  setShowModal(false);
+                }}
+              >
+                Save
+              </Button>
+            </Button.Group>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+
+      <View justifyContent="center" width={wp("85%")}>
+        <Flex width={wp("80%")} flexDirection="row">
           <View justifyContent="center" width="84%">
-            <Text
-              fontSize={20}
-              fontWeight="bold"
-              position="relative"
-              style={{}}
-            >
-              Hi, Bagas!
+            <Text fontSize={30} fontWeight="bold" position="relative">
+              Hi, {user}!
             </Text>
-            <Text fontSize={13} position="relative" color="#FF5555" style={{}}>
-              200 lists
+            <Text fontSize={16} position="relative" color="#FF5555" style={{}}>
+              {listCount} lists
             </Text>
           </View>
           <Image
             source={Photo}
             resizeMode="contain"
-            width="10"
-            height="10"
+            size="sm"
             borderRadius={50}
+            alt="photo"
           />
-        </View>
+        </Flex>
         <VStack w="100%" space={5} alignSelf="center" mt={4}>
           <Input
-            placeholder="Search"
+            placeholder="Search List"
             variant="filled"
             width="100%"
             borderRadius="10"
             py="2"
             px="3"
-            style={{}}
+            backgroundColor="#0000001a"
+            fontSize={11}
           />
         </VStack>
-        <View
+        <Flex
           w="100%"
           space={5}
           alignSelf="center"
           mt={2}
-          display="flex"
           flexDirection="row"
           justifyContent="space-between"
         >
           <VStack w="31%" space={5} alignSelf="center">
-            <Input
-              placeholder="Search"
+            <View
               variant="filled"
               width="100%"
               borderRadius="10"
               py="2"
               px="3"
-              style={{}}
-            />
+              backgroundColor="#0000001a"
+              marginTop={1}
+            >
+              <Button
+                fontSize={11}
+                onPress={() => setShowModal(true)}
+                backgroundColor="none"
+                padding={0}
+                py="4px"
+                placeholder="Select Date"
+                pl={-5}
+                leftIcon={<AntDesign name="calendar" size={15} color="black" />}
+              >
+                <Text color="#999999" numberOfLines={1} style={{ width: 60 }}>
+                  {date ? date.toDateString() : "Select date..."}
+                </Text>
+              </Button>
+            </View>
           </VStack>
           <VStack w="31%" space={5} alignSelf="center">
             <Select
               selectedValue={service}
+              fontSize={11}
               placeholder="Category"
               mt={1}
               variant="filled"
@@ -136,17 +206,17 @@ function Home({ navigation }) {
               borderRadius="10"
               py="2"
               px="3"
+              backgroundColor="#0000001a"
               onValueChange={(itemValue) => setService(itemValue)}
-              dropdownCloseIcon
-              style={{}}
             >
-              <Select.Item label="Study" value="study" style={{}} />
-              <Select.Item label="Work" value="work" style={{}} />
+              <Select.Item label="Study" value="study" />
+              <Select.Item label="Work" value="work" />
             </Select>
           </VStack>
           <VStack w="31%" space={5} alignSelf="center">
             <Select
               selectedValue={cat}
+              accessibilityLabel="Status"
               placeholder="Status"
               mt={1}
               variant="filled"
@@ -155,77 +225,92 @@ function Home({ navigation }) {
               py="2"
               px="3"
               onValueChange={(itemValue) => setCat(itemValue)}
-              dropdownCloseIcon
-              style={{}}
+              fontSize={11}
+              backgroundColor="#0000001a"
+              sceneContainerStyle="transparent"
             >
               <Select.Item label="Progress" value="progress" style={{}} />
               <Select.Item label="Done" value="done" style={{}} />
             </Select>
           </VStack>
-        </View>
+        </Flex>
         <ScrollView
           width={wp("85%")}
-          h="80"
+          h="70%"
           showsHorizontalScrollIndicator={false}
           mt={3}
         >
           <View justifyContent="center" width={wp("85%")}>
-            {Profile.map((p, index) => (
-              <TouchableOpacity onPress={() => navigation.navigate("Detail")}>
-                <View
+            {list?.map((user) => (
+              <Button
+                backgroundColor="#F2F2F2"
+                py={1}
+                onPress={() => navigation.navigate("Detail")}
+                key={user._id}
+              >
+                <Flex
                   backgroundColor="#DAEFFF"
-                  display="flex"
                   flexDirection="row"
                   py={2}
                   px={4}
                   borderRadius={10}
                   my={2}
-                  onPress={() => navigation.navigate("Detail")}
-                  key={index}
                 >
                   <View width={wp("60%")}>
-                    <Text fontSize={13} fontWeight="bold" style={{}}>
-                      {p.title}
+                    <Text fontSize={20} fontWeight="bold" mt={2}>
+                      {user.name}
                     </Text>
-                    <Text fontSize={8} style={{ color: "#9B9B9B" }} width="90%">
-                      {p.description}
+                    <Text
+                      fontSize={12}
+                      style={{ color: "#9B9B9B" }}
+                      width="90%"
+                      mt={3}
+                    >
+                      {user.desc}{" "}
                     </Text>
-                    <Text fontSize={8} mt={4} style={{ color: "#9B9B9B" }}>
-                      {p.date}
+                    <Text fontSize={12} mt={4} style={{ color: "#9B9B9B" }}>
+                      <AntDesign name="calendar" size={13} color="grey" />{" "}
+                      &nbsp;
+                      {Moment(user.date).format("d MMM yyyy")}{" "}
                     </Text>
                   </View>
-                  <View>
+                  <View ml={4}>
                     <Box
                       backgroundColor="#81C8FF"
                       py={1}
                       px={2}
                       borderRadius={8}
+                      mt={3}
                     >
                       <Text
+                        textAlign="center"
                         fontSize={10}
                         fontWeight="bold"
                         color="white"
                         style={{}}
                       >
-                        Study
+                        {user.category}
                       </Text>
                     </Box>
-                    <Box
-                      backgroundColor="#D9D9D9"
-                      width={9}
-                      height={9}
-                      borderRadius={50}
-                      mt={2}
-                      ml={1}
-                    ></Box>
+                    <Button p={0}>
+                      <Image
+                        source={{
+                          uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",
+                        }}
+                        width={9}
+                        height={9}
+                        alt="status"
+                        mt={3}
+                      ></Image>
+                    </Button>
                   </View>
-                </View>
-              </TouchableOpacity>
+                </Flex>
+              </Button>
             ))}
           </View>
         </ScrollView>
       </View>
-    </View>
+    </Flex>
   );
 }
 

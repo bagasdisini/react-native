@@ -50,21 +50,13 @@ export default function Container() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen
-          name="MyTab"
-          component={MyTab}
-          options={{
-            headerShown: false,
-            headerTintColor: "white",
-            headerMode: "screen",
-          }}/>
-        <Stack.Screen
-          name="Detail"
-          component={Detail}
+          name="Landing"
+          component={Landing}
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Landing"
-          component={Landing}
+          name="Register"
+          component={Register}
           options={{ headerShown: false }}
         />
         <Stack.Screen
@@ -73,9 +65,23 @@ export default function Container() {
           options={{ headerShown: false }}
         />
         <Stack.Screen
-          name="Register"
-          component={Register}
-          options={{ headerShown: false }}
+          name="MyTab"
+          component={MyTab}
+          options={{
+            headerShown: false,
+            headerTintColor: "white",
+            headerMode: "screen",
+          }}
+        />
+        <Stack.Screen
+          name="Detail"
+          component={Detail}
+          options={{
+            title: "Home",
+            headerShown: true,
+            headerTintColor: "black",
+            headerMode: "screen",
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>

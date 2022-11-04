@@ -4,45 +4,64 @@ import {
   View,
   Text,
   Button,
-  Box,
-  Heading,
   VStack,
   FormControl,
   Input,
-  Link,
   HStack,
-  Center,
-  NativeBaseProvider,
+  Flex,
 } from "native-base";
 import React, { useState } from "react";
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
+import { API } from "../config/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function Register({ navigation }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [form, setForm] = useState("");
+
+  function handleChange(name, value) {
+    setForm({
+      ...form,
+      [name]: value,
+    });
+  }
+
+  const handleSubmit = async (e) => {
+    try {
+      
+      const response = await API.post("/auth/register", form);
+      alert(`Register berhasil!`);
+      navigation.navigate("Login");
+
+    } catch (e) {
+
+      console.log(e);
+      alert("Register gagal!");
+
+    }
+  };
 
   return (
-    <View
-      display="flex"
+    <Flex
       alignItems="center"
       justifyContent="center"
       flexDirection="column"
       height={hp("85%")}
       mt={50}
     >
-      <View flex="90%" justifyContent="center" mt={15}>
+      <View width="90%" justifyContent="center" mt={15}>
         <Image
           maxWidth="100%"
           height={hp("26%")}
           source={LoginRegister}
           resizeMode="contain"
+          alt="photo"
         />
         <View width={wp("85%")}>
           <Text
-            fontSize={20}
+            fontSize={30}
             fontWeight="bold"
             position="relative"
             marginTop={50}
@@ -51,27 +70,50 @@ function Register({ navigation }) {
             Register
           </Text>
         </View>
-        <VStack flex="10%" mt={4}>
+        <VStack width="100%" mt={4}>
           <FormControl>
-            <Input placeholder="Name" backgroundColor="#0000001a" style={{}} />
+            <Input
+              placeholder="Name"
+              backgroundColor="#0000001a"
+              fontSize={15}
+              name="firstName"
+              onChangeText={(value) => handleChange("firstName", value)}
+              value={form.firstName}
+            />
           </FormControl>
           <FormControl mt={4}>
-            <Input placeholder="Email" backgroundColor="#0000001a" style={{}} />
+            <Input
+              placeholder="Email"
+              backgroundColor="#0000001a"
+              fontSize={15}
+              name="email"
+              onChangeText={(value) => handleChange("email", value)}
+              value={form.email}
+            />
           </FormControl>
           <FormControl mt={4}>
             <Input
               type="password"
               placeholder="Password"
               backgroundColor="#0000001a"
-              style={{}}
+              fontSize={15}
+              name="password"
+              onChangeText={(value) => handleChange("password", value)}
+              value={form.password}
             />
           </FormControl>
-          <Button mt="6" backgroundColor="#FF5555" py={2}>
-            <Text style={{ color: "white" }}>Register</Text>
+          <Button
+            mt="6"
+            backgroundColor="#FF5555"
+            py={2}
+            onPress={handleSubmit}
+          >
+            <Text style={{ color: "white" }} fontSize={17}>
+              Register
+            </Text>
           </Button>
-          <HStack mt="3" justifyContent="center">
+          <HStack mt="5" justifyContent="center">
             <Text
-              fontSize="sm"
               color="coolGray.600"
               _dark={{
                 color: "warmGray.200",
@@ -83,10 +125,9 @@ function Register({ navigation }) {
             <Text
               style={{
                 color: "#FF5555",
-                fontWeight: "medium",
-                fontSize: "sm",
                 textDecoration: "none",
               }}
+              fontWeight="medium"
               onPress={() => navigation.navigate("Login")}
             >
               Login
@@ -94,8 +135,8 @@ function Register({ navigation }) {
           </HStack>
         </VStack>
       </View>
-      <View width={wp("80%")} flex="30%"></View>
-    </View>
+      <View width={wp("80%")}></View>
+    </Flex>
   );
 }
 
