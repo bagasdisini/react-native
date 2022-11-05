@@ -17,7 +17,7 @@ import { API } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function AddCategory() {
-  const [form, setForm] = useState({ id: null });
+  const [form, setForm] = useState({ userId: null });
   const [dataCategory, setdataCategory] = useState([]);
 
   function handleChange(name, value) {
@@ -51,9 +51,9 @@ function AddCategory() {
   const getCategory = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const id = await AsyncStorage.getItem("id");
+      const userId = await AsyncStorage.getItem("id");
       setForm({
-        id,
+        userId,
       });
       if (token === null) {
         navigation.navigate("Login");
@@ -64,7 +64,7 @@ function AddCategory() {
           Authorization: "Bearer " + token,
         },
       };
-      const response = await API.get(`/category?$lookup=*&id=${id}`, config);
+      const response = await API.get(`/category?$lookup=*&userId=${userId}`, config);
       setdataCategory(response.data);
     } catch (error) {
       console.log(error);

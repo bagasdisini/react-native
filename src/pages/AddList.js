@@ -41,7 +41,7 @@ function AddList() {
         navigation.navigate("Login");
       }
 
-      const response = await API.post("/add-list", list, {
+      const response = await API.post("/list1", list, {
         headers: {
           Authorization: "Bearer " + token,
         },
@@ -57,9 +57,9 @@ function AddList() {
   const getCategory = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const id = await AsyncStorage.getItem("id");
+      const userId = await AsyncStorage.getItem("id");
       setList({
-        id,
+        userId,
       });
 
       if (token === null) {
@@ -72,7 +72,7 @@ function AddList() {
         },
       };
 
-      const response = await API.get(`/category?$lookup=*&id=${id}`, config);
+      const response = await API.get(`/category?$lookup=*&userId=${userId}`, config);
       setdataCategory(response.data);
     } catch (error) {
       console.log(error);
@@ -164,7 +164,7 @@ function AddList() {
             >
               {" "}
               {dataCategory?.map((p) => (
-                <Select.Item label={p.name} value={p.name} />
+                <Select.Item label={p.name} value={p.name} key={p._id}/>
               ))}
             </Select>
           </FormControl>

@@ -38,19 +38,19 @@ function Home({ navigation }) {
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const id = await AsyncStorage.getItem("id");
+      const userId = await AsyncStorage.getItem("id");
 
       if (token === null) {
         navigation.navigate("Login");
       }
 
-      const userResponse = await API.get(`/Users/${id}`, {
+      const userResponse = await API.get(`/Users/${userId}`, {
         headers: {
           Authorization: "Bearer " + token,
         },
       });
-      const listCountResponse = await API.get(`/list?id=${id}`, {});
-      const listResponse = await API.get(`/lists?id=${id}`, {});
+      const listCountResponse = await API.get(`/list1/count`, {});
+      const listResponse = await API.get(`/list1?userId=${userId}`, {});
 
       setUser(userResponse.data.firstName);
       setListCount(listCountResponse.data.count);
@@ -60,23 +60,23 @@ function Home({ navigation }) {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   try {
-  //     const token = await AsyncStorage.getItem("token");
+  const handleSubmit = async (e) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
 
-  //     if (token === null) {
-  //       navigation.navigate("Login");
-  //     }
+      if (token === null) {
+        navigation.navigate("Login");
+      }
 
-  //     const response = await API.post("/add-list", list, {
-  //       headers: {
-  //         Authorization: "Bearer " + token,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
+      const response = await API.post("/add-list", list, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     if (isFocused) {
