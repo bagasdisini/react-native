@@ -5,10 +5,10 @@ import {
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
 import Moment from "moment";
+import { AntDesign } from "@expo/vector-icons";
 
 function Details({ navigation, route }) {
   const { user123 } = route.params;
-  console.log(user123);
 
   return (
     <Flex
@@ -63,6 +63,7 @@ function Details({ navigation, route }) {
                 {user123.desc}
               </Text>
               <Text fontSize={15} mt={5} style={{ color: "#9B9B9B" }}>
+                <AntDesign name="calendar" size={15} color="black" /> &nbsp;
                 {Moment(user123.date).format("ll")}
               </Text>
             </View>

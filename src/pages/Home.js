@@ -31,10 +31,11 @@ function Home({ navigation }) {
   const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState();
   const [list, setList] = useState();
-  const [listId, setListId] = useState();
-  const [status, setNama] = useState();
   const [listCount, setListCount] = useState();
   const isFocused = useIsFocused();
+  const [dataCategory, setdataCategory] = useState([]);
+
+  console.log(list.status);
 
   const getUsers = async () => {
     try {
@@ -44,6 +45,8 @@ function Home({ navigation }) {
       if (token === null) {
         navigation.navigate("Login");
       }
+
+      getCategory();
 
       const userResponse = await API.get(`/Users/${userId}`, {
         headers: {
@@ -61,6 +64,46 @@ function Home({ navigation }) {
       console.log(error);
     }
   };
+
+  const getCategory = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const userId = await AsyncStorage.getItem("id");
+
+      if (token === null) {
+        navigation.navigate("Login");
+      }
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        },
+      };
+
+      const response = await API.get(
+        `/category?userId=${userId}`,
+        config
+      );
+
+      setdataCategory(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const toggleDone = (_id) => {
+    console.log(_id);
+  
+    let updatedList = list.data.map(item => 
+      {
+        if (item._id == _id){
+          return {...item, status: !item.status}; //gets everything that was already in item, and updates "done"
+        }
+        return item; // else return unmodified item 
+      });
+      
+      setList({list: updatedList}); // set state to new object with updated list
+  }
 
   useEffect(() => {
     if (isFocused) {
@@ -193,8 +236,9 @@ function Home({ navigation }) {
               backgroundColor="#0000001a"
               onValueChange={(itemValue) => setService(itemValue)}
             >
-              <Select.Item label="Study" value="study" />
-              <Select.Item label="Work" value="work" />
+              {dataCategory?.map((p) => (
+                <Select.Item label={p.name} value={p.name} key={p._id} />
+              ))}{" "}
             </Select>
           </VStack>
           <VStack w="31%" space={5} alignSelf="center">
@@ -213,8 +257,8 @@ function Home({ navigation }) {
               backgroundColor="#0000001a"
               sceneContainerStyle="transparent"
             >
-              <Select.Item label="Progress" value="progress" style={{}} />
-              <Select.Item label="Done" value="done" style={{}} />
+              <Select.Item label="Progress" value="false" />
+              <Select.Item label="Done" value="true" />
             </Select>
           </VStack>
         </Flex>
@@ -229,7 +273,7 @@ function Home({ navigation }) {
               <Button
                 backgroundColor="#F2F2F2"
                 py={1}
-                onPress={() => navigation.navigate("Detail", {user123: user})}
+                onPress={() => navigation.navigate("Detail", { user123: user })}
                 key={user._id}
               >
                 <Flex
@@ -276,7 +320,7 @@ function Home({ navigation }) {
                         {user.category}
                       </Text>
                     </Box>
-                    <Button p={0} backgroundColor="none">
+                    <Button p={0} backgroundColor="none" toggleDone={toggleDone}>
                       <Image
                         source={{
                           uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",

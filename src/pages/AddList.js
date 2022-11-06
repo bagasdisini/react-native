@@ -19,12 +19,13 @@ import { API } from "../config/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DatePicker from "@dietime/react-native-date-picker";
 import { AntDesign } from "@expo/vector-icons";
+import { useIsFocused } from "@react-navigation/native";
 
 function AddList() {
   const [showModal, setShowModal] = useState(false);
   const [list, setList] = useState({ id: null });
-  const [date, setDate] = useState(new Date());
   const [dataCategory, setdataCategory] = useState([]);
+  const isFocused = useIsFocused();
 
   function handleChange(name, value) {
     setList({
@@ -74,14 +75,17 @@ function AddList() {
 
       const response = await API.get(`/category?$lookup=*&userId=${userId}`, config);
       setdataCategory(response.data);
+
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    getCategory();
-  }, []);
+    if (isFocused) {
+      getCategory();
+    }
+  }, [isFocused]);
 
   return (
     <Flex
