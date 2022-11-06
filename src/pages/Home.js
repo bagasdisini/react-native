@@ -34,9 +34,7 @@ function Home({ navigation }) {
   const [listCount, setListCount] = useState();
   const isFocused = useIsFocused();
   const [dataCategory, setdataCategory] = useState([]);
-
-  console.log(list.status);
-
+  
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -80,30 +78,13 @@ function Home({ navigation }) {
         },
       };
 
-      const response = await API.get(
-        `/category?userId=${userId}`,
-        config
-      );
+      const response = await API.get(`/category?userId=${userId}`, config);
 
       setdataCategory(response.data);
     } catch (error) {
       console.log(error);
     }
   };
-
-  const toggleDone = (_id) => {
-    console.log(_id);
-  
-    let updatedList = list.data.map(item => 
-      {
-        if (item._id == _id){
-          return {...item, status: !item.status}; //gets everything that was already in item, and updates "done"
-        }
-        return item; // else return unmodified item 
-      });
-      
-      setList({list: updatedList}); // set state to new object with updated list
-  }
 
   useEffect(() => {
     if (isFocused) {
@@ -320,7 +301,7 @@ function Home({ navigation }) {
                         {user.category}
                       </Text>
                     </Box>
-                    <Button p={0} backgroundColor="none" toggleDone={toggleDone}>
+                    <Button p={0} backgroundColor="none">
                       <Image
                         source={{
                           uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",
