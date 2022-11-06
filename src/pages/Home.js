@@ -31,6 +31,7 @@ function Home({ navigation }) {
   const [showModal, setShowModal] = useState(false);
   const [user, setUser] = useState();
   const [list, setList] = useState();
+  const [listId, setListId] = useState();
   const [status, setNama] = useState();
   const [listCount, setListCount] = useState();
   const isFocused = useIsFocused();
@@ -49,6 +50,7 @@ function Home({ navigation }) {
           Authorization: "Bearer " + token,
         },
       });
+
       const listCountResponse = await API.get(`/list1/count`, {});
       const listResponse = await API.get(`/list1?userId=${userId}`, {});
 
@@ -57,24 +59,6 @@ function Home({ navigation }) {
       setList(listResponse.data);
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    try {
-      const token = await AsyncStorage.getItem("token");
-
-      if (token === null) {
-        navigation.navigate("Login");
-      }
-
-      const response = await API.post("/add-list", list, {
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
-    } catch (e) {
-      console.log(e);
     }
   };
 
@@ -245,7 +229,7 @@ function Home({ navigation }) {
               <Button
                 backgroundColor="#F2F2F2"
                 py={1}
-                onPress={() => navigation.navigate("Detail")}
+                onPress={() => navigation.navigate("Detail", {user123: user})}
                 key={user._id}
               >
                 <Flex
@@ -271,7 +255,7 @@ function Home({ navigation }) {
                     <Text fontSize={12} mt={4} style={{ color: "#9B9B9B" }}>
                       <AntDesign name="calendar" size={13} color="grey" />{" "}
                       &nbsp;
-                      {Moment(user.date).format("d MMM yyyy")}{" "}
+                      {Moment(user.date).format("ll")}{" "}
                     </Text>
                   </View>
                   <View ml={4}>
@@ -292,7 +276,7 @@ function Home({ navigation }) {
                         {user.category}
                       </Text>
                     </Box>
-                    <Button p={0}>
+                    <Button p={0} backgroundColor="none">
                       <Image
                         source={{
                           uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",

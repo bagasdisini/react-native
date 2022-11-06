@@ -4,9 +4,12 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-import { Ionicons } from "@expo/vector-icons";
+import Moment from "moment";
 
-function Details({ navigation }) {
+function Details({ navigation, route }) {
+  const { user123 } = route.params;
+  console.log(user123);
+
   return (
     <Flex
       alignItems="center"
@@ -36,17 +39,13 @@ function Details({ navigation }) {
             >
               <View width={wp("60%")}>
                 <Text fontSize={20} fontWeight="bold" my="auto" style={{}}>
-                  Study - Golang
+                  {user123.name}
                 </Text>
               </View>
               <View>
                 <Box backgroundColor="#81C8FF" py={1} px={2} borderRadius={8}>
-                  <Text
-                    fontSize={10}
-                    fontWeight="bold"
-                    color="white"
-                  >
-                    Study
+                  <Text fontSize={10} fontWeight="bold" color="white">
+                    {user123.category}
                   </Text>
                 </Box>
                 <Box
@@ -61,32 +60,10 @@ function Details({ navigation }) {
             </Flex>
             <View mt={3} width={wp("75%")}>
               <Text fontSize={15} style={{ color: "#9B9B9B" }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Pellentesque imperdiet massa ac tincidunt scelerisque. Morbi vel
-                turpis maximus, pulvinar metus quis, mattis neque. Pellentesque
-                ut nulla lectus. Nulla ut vulputate risus, non ultricies mauris.
-                Suspendisse posuere velit pellentesque felis posuere, a volutpat
-                diam cursus. In iaculis risus nunc, sollicitudin varius ante
-                blandit vel. Sed nec nisi hendrerit, vulputate est eget, luctus
-                nisi. Donec quis lobortis nulla. Fusce rutrum lobortis ex id
-                vestibulum. Sed elementum sagittis nibh, sed venenatis lectus
-                efficitur non. Mauris metus magna, luctus vitae nunc non,
-                blandit blandit velit. Nunc bibendum neque a dolor rhoncus
-                semper at eget. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Pellentesque imperdiet massa ac tincidunt scelerisque. Morbi vel
-                turpis maximus, pulvinar metus quis, mattis neque. Pellentesque
-                ut nulla lectus. Nulla ut vulputate risus, non ultricies mauris.
-                Suspendisse posuere velit pellentesque felis posuere, a volutpat
-                diam cursus. In iaculis risus nunc, sollicitudin varius ante
-                blandit vel. Sed nec nisi hendrerit, vulputate est eget, luctus
-                nisi. Donec quis lobortis nulla. Fusce rutrum lobortis ex id
-                vestibulum. Sed elementum sagittis nibh, sed venenatis lectus
-                efficitur non. Mauris metus magna, luctus vitae nunc non,
-                blandit blandit velit. Nunc bibendum neque a dolor rhoncus
-                semper at eget.
+                {user123.desc}
               </Text>
               <Text fontSize={15} mt={5} style={{ color: "#9B9B9B" }}>
-                19 July 2022
+                {Moment(user123.date).format("ll")}
               </Text>
             </View>
           </View>
