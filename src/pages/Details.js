@@ -1,4 +1,4 @@
-import { View, Text, Box, Button, ScrollView, Flex } from "native-base";
+import { View, Text, Box, Button, ScrollView, Flex, Image } from "native-base";
 import React from "react";
 import {
   widthPercentageToDP as wp,
@@ -6,9 +6,38 @@ import {
 } from "react-native-responsive-screen";
 import Moment from "moment";
 import { AntDesign } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { API } from "../config/api";
 
 function Details({ navigation, route }) {
   const { user123 } = route.params;
+
+  const updateTodo = async ({ id, name, desc, status, category, userId }) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token === null) {
+        navigation.navigate("Login");
+      }
+
+      const data = {
+        category: category,
+        desc: desc,
+        userId: userId,
+        name: name,
+        status: !status,
+      };
+
+      await API.patch(`/list1/${id}`, data, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+    } catch (error) {
+      alert(error);
+      console.log(error);
+    }
+  };
 
   return (
     <Flex
@@ -48,14 +77,35 @@ function Details({ navigation, route }) {
                     {user123.category}
                   </Text>
                 </Box>
-                <Box
-                  backgroundColor="#D9D9D9"
-                  width={9}
-                  height={9}
-                  borderRadius={50}
-                  mt={2}
-                  ml={1}
-                ></Box>
+                <TouchableOpacity
+                  p={0}
+                  onPress={() =>
+                    updateTodo({
+                      id: user123._id,
+                      name: user123.name,
+                      desc: user123.desc,
+                      status: user123.status,
+                      category: user123.category,
+                      userId: user123.userId,
+                    })
+                  }
+                >
+                  <Image
+                    source={
+                      user123.status
+                        ? {
+                            uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Vector_bwiitx.png",
+                          }
+                        : {
+                            uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",
+                          }
+                    }
+                    width={9}
+                    height={9}
+                    alt="status"
+                    mt={3}
+                  ></Image>
+                </TouchableOpacity>
               </View>
             </Flex>
             <View mt={3} width={wp("75%")}>

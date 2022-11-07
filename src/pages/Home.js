@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { AntDesign } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
 import Moment from "moment";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 function Home({ navigation }) {
   const [cat, setCat] = useState("");
@@ -32,9 +33,9 @@ function Home({ navigation }) {
   const [user, setUser] = useState();
   const [list, setList] = useState();
   const [listCount, setListCount] = useState();
-  const isFocused = useIsFocused();
   const [dataCategory, setdataCategory] = useState([]);
-  
+  const isFocused = useIsFocused();
+
   const getUsers = async () => {
     try {
       const token = await AsyncStorage.getItem("token");
@@ -86,9 +87,38 @@ function Home({ navigation }) {
     }
   };
 
+  const updateTodo = async ({ id, name, desc, status, category, userId }) => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      if (token === null) {
+        navigation.navigate("Login");
+      }
+
+      const list = {
+        category: category,
+        desc: desc,
+        userId: userId,
+        name: name,
+        status: !status,
+      };
+
+      await API.patch(`/list1/${id}`, list, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+
+      getCategory();
+    } catch (error) {
+      alert(error);
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (isFocused) {
       getUsers();
+      getCategory();
     }
   }, [isFocused]);
 
@@ -301,17 +331,35 @@ function Home({ navigation }) {
                         {user.category}
                       </Text>
                     </Box>
-                    <Button p={0} backgroundColor="none">
+                    <TouchableOpacity
+                      p={0}
+                      onPress={() =>
+                        updateTodo({
+                          id: user._id,
+                          name: user.name,
+                          desc: user.desc,
+                          status: user.status,
+                          category: user.category,
+                          userId: user.userId,
+                        })
+                      }
+                    >
                       <Image
-                        source={{
-                          uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",
-                        }}
+                        source={
+                          user.status
+                            ? {
+                                uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Vector_bwiitx.png",
+                              }
+                            : {
+                                uri: "https://res.cloudinary.com/dy5ntbnnh/image/upload/v1667575351/Ellipse_1_pw31dv.png",
+                              }
+                        }
                         width={9}
                         height={9}
                         alt="status"
                         mt={3}
                       ></Image>
-                    </Button>
+                    </TouchableOpacity>
                   </View>
                 </Flex>
               </Button>
